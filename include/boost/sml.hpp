@@ -1293,8 +1293,9 @@ class sm {
   using logger_dep_t =
       aux::conditional_t<aux::is_same<no_policy, logger_t>::value, aux::type_list<>, aux::type_list<logger_t &>>;
   using transitions_t = decltype(aux::declval<sm_t>().operator()());
+#if !defined(_MSC_VER)
   static_assert(concepts::composable<sm_t>::value, "Composable constraint is not satisfied!");
-
+#endif
  public:
   using states = aux::apply_t<aux::unique_t, aux::apply_t<get_states, transitions_t>>;
   using state_machines = aux::apply_t<get_sub_sms, states>;
