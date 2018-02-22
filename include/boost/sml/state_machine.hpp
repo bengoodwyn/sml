@@ -41,6 +41,8 @@ using state_machine = back::sm<T>;
 }  // detail
 
 template <class T, class... TPolicies>
-using sm = detail::state_machine<back::sm_policy<T, TPolicies...>>;
+struct sm : detail::state_machine<back::sm_policy<T, TPolicies...>> {
+  using detail::state_machine<back::sm_policy<T, TPolicies...>>::state_machine;
+};
 
 #endif

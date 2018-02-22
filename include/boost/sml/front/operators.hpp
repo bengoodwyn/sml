@@ -11,6 +11,12 @@
 #include "boost/sml/back/internals.hpp"
 #include "boost/sml/concepts/callable.hpp"
 
+template <class TRootSM, class... TSubSMs>
+TRootSM get_root_sm_impl(aux::pool<TRootSM, TSubSMs...>*);
+
+template <class TSubs>
+using get_root_sm_t = decltype(get_root_sm_impl((TSubs*)0));
+
 namespace front {
 
 struct operator_base {};
