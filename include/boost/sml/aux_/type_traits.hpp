@@ -179,6 +179,13 @@ struct is_reference<T &> : true_type {};
 template <class T>
 struct is_reference<T &&> : true_type {};
 
+template <class T, class = decltype(sizeof(T))>
+true_type is_complete_impl(int);
+template <class T>
+false_type is_complete_impl(...);
+template <class T>
+struct is_complete : decltype(is_complete_impl<T>(0)) {};
+
 }  // aux
 
 #endif

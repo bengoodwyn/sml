@@ -208,6 +208,12 @@ template <class T>
 struct is_reference<T &> : true_type {};
 template <class T>
 struct is_reference<T &&> : true_type {};
+template <class T, class = decltype(sizeof(T))>
+true_type is_complete_impl(int);
+template <class T>
+false_type is_complete_impl(...);
+template <class T>
+struct is_complete : decltype(is_complete_impl<T>(0)) {};
 }
 namespace aux {
 using swallow = int[];
@@ -1668,13 +1674,11 @@ struct logger : aux::pair<back::logger_policy__, logger<T>> {
 };
 struct testing : aux::pair<back::testing_policy__, testing> {};
 namespace detail {
-template <class T, __BOOST_SML_REQUIRES(concepts::composable<typename T::sm>::value)>
+template <class T>
 using state_machine = back::sm<T>;
 }
 template <class T, class... TPolicies>
-struct sm : detail::state_machine<back::sm_policy<T, TPolicies...>> {
-  using detail::state_machine<back::sm_policy<T, TPolicies...>>::state_machine;
-};
+using sm = detail::state_machine<back::sm_policy<T, TPolicies...>>;
 namespace concepts {
 aux::false_type transitional_impl(...);
 template <class T>

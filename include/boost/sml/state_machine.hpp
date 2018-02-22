@@ -36,13 +36,11 @@ struct logger : aux::pair<back::logger_policy__, logger<T>> {
 struct testing : aux::pair<back::testing_policy__, testing> {};
 
 namespace detail {
-template <class T, __BOOST_SML_REQUIRES(concepts::composable<typename T::sm>::value)>
+template <class T>//, __BOOST_SML_REQUIRES(concepts::composable<typename T::sm>::value)>
 using state_machine = back::sm<T>;
 }  // detail
 
 template <class T, class... TPolicies>
-struct sm : detail::state_machine<back::sm_policy<T, TPolicies...>> {
-  using detail::state_machine<back::sm_policy<T, TPolicies...>>::state_machine;
-};
+using sm = detail::state_machine<back::sm_policy<T, TPolicies...>>;
 
 #endif
