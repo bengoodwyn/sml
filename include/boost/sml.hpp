@@ -1672,7 +1672,9 @@ struct logger : aux::pair<back::logger_policy__, logger<T>> {
 };
 struct testing : aux::pair<back::testing_policy__, testing> {};
 template <class T, class... TPolicies>
-using sm = typename back::sm<back::sm_policy<T, TPolicies...>>;
+struct sm : back::sm<back::sm_policy<T, TPolicies...>> {
+  using back::sm<back::sm_policy<T, TPolicies...>>::sm;
+};
 namespace concepts {
 aux::false_type transitional_impl(...);
 template <class T>
