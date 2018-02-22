@@ -688,10 +688,6 @@ struct convert_to_sm<T, aux::type_list<Ts...>> {
 };
 }
 namespace back {
-template <class>
-class sm;
-template <class, class...>
-struct sm_policy;
 struct thread_safety_policy__ {};
 struct defer_queue_policy__ {};
 struct logger_policy__ {};
@@ -708,8 +704,8 @@ template <class>
 no_policy get_policy(...);
 template <class T, class TPolicy>
 TPolicy get_policy(aux::pair<T, TPolicy> *);
-template <class, class...>
-struct sm_policy;
+template <class>
+class sm;
 template <class SM, class... TPolicies>
 struct sm_policy {
   using sm = SM;
