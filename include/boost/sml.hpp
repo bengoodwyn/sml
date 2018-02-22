@@ -983,6 +983,14 @@ template <class T, class TMappings>
 using get_event_mapping_t = get_event_mapping_impl_helper<T, TMappings>;
 }
 namespace concepts {
+template <class T>
+decltype(aux::declval<T>().operator()()) composable_impl(int);
+template <class>
+void composable_impl(...);
+template <class T>
+struct composable : aux::is<aux::pool, decltype(composable_impl<T>(0))> {};
+}
+namespace concepts {
 struct callable_fallback {
   void operator()();
 };
@@ -1289,6 +1297,7 @@ class sm {
   using logger_dep_t =
       aux::conditional_t<aux::is_same<no_policy, logger_t>::value, aux::type_list<>, aux::type_list<logger_t &>>;
   using transitions_t = decltype(aux::declval<sm_t>().operator()());
+  static_assert(concepts::composable<sm_t>::value, "Composable constraint is not satisfied!");
 
  public:
   using states = aux::apply_t<aux::unique_t, aux::apply_t<get_states, transitions_t>>;
@@ -1374,14 +1383,6 @@ class sm {
   deps_t deps_;
   sub_sms_t sub_sms_;
 };
-}
-namespace concepts {
-template <class T>
-decltype(aux::declval<T>().operator()()) composable_impl(int);
-template <class>
-void composable_impl(...);
-template <class T>
-struct composable : aux::is<aux::pool, decltype(composable_impl<T>(0))> {};
 }
 template <class TRootSM, class... TSubSMs>
 TRootSM get_root_sm_impl(aux::pool<TRootSM, TSubSMs...> *);
@@ -1673,12 +1674,8 @@ struct logger : aux::pair<back::logger_policy__, logger<T>> {
   using type = T;
 };
 struct testing : aux::pair<back::testing_policy__, testing> {};
-namespace detail {
-template <class T>
-using state_machine = back::sm<T>;
-}
 template <class T, class... TPolicies>
-using sm = detail::state_machine<back::sm_policy<T, TPolicies...>>;
+using sm = typename back::sm<back::sm_policy<T, TPolicies...>>;
 namespace concepts {
 aux::false_type transitional_impl(...);
 template <class T>
